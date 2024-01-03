@@ -17,5 +17,10 @@ class MyAppTests(unittest.TestCase):
         response = self.app.get("/actors")
         self.assertEqual(response.status_code, 200)
         self.assertTrue("Female" in response.data.decode("utf-8"))
+
+    def test_getactors(self):
+        response = self.app.get("/actors/1")
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue("Dicrostonyx" in response.data.decode("utf-8"))
 if __name__ == "__main__":
     unittest.main()
