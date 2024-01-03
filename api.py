@@ -3,9 +3,7 @@
 
 # app = Flask(__name__)
 
-# @app.route("/")
-# def hello_world():
-#     return "<p>Hello, World!</p>"
+
 
 # if __name__ == "__main__":
 #     app.run(debug=True)
@@ -25,8 +23,11 @@ app.config["MYSQL_DB"] = "final"
 app.config["MYSQL_CURSORCLASS"] = "DictCursor"
 
 mysql = MySQL(app)
+@app.route("/")
+def hello_world():
+    return "<p>Hello, World!</p>"
 
-@app.route("/", methods=["GET"])
+@app.route("/actors", methods=["GET"])
 def users():
     cur = mysql.connection.cursor()
     cur.execute("""SELECT * FROM final.address;""")
