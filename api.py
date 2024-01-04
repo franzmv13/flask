@@ -27,31 +27,53 @@ mysql = MySQL(app)
 def hello_world():
     return "<p>Hello, World!</p>"
 
-@app.route("/address", methods=["GET"])
+@app.route("/manager", methods=["GET"])
 def users():
     cur = mysql.connection.cursor()
-    cur.execute("""SELECT * FROM final.address;""")
+    cur.execute("""SELECT * FROM final.manager;""")
     rv = cur.fetchall()
     return make_response(jsonify(rv), 200)
 
-@app.route("/address/<int:id>", methods=["GET"])
+@app.route("/manager/<int:id>", methods=["GET"])
 def get_actor_by_id(id):
     cur = mysql.connection.cursor()
-    cur.execute("""SELECT * FROM final.address WHERE `address_id` = {}""".format(id))
+    cur.execute("""SELECT * FROM final.manager WHERE `id` = {}""".format(id))
     rv = cur.fetchall()
     return make_response(jsonify(rv), 200)
 
-@app.route("/address/<int:id>/agency", methods=["GET"])
+@app.route("/manager/<int:id>/agency", methods=["GET"])
 def get_agency_by_id(id):
     cur = mysql.connection.cursor()
-    cur.execute("""SELECT address.country, agency.agency_name
-                    FROM address
-                    INNER JOIN agency on agency.id = address.address_id
-                    WHERE agency.id = {};
+    cur.execute("""SELECT manager.first_name,manager.last_name, agency.agency_name
+                    FROM manager
+                    INNER JOIN agency on agency.id = manager.id
+                    WHERE agency.id = 2 {};
                 """.format(id))
     rv = cur.fetchall()
     return make_response(jsonify(rv), 200)
 
+
+@app.route("/manager", methods=["POST"])
+def add_actor():
+    cur = mysql.connection.cursor()
+    info = request.get_json()
+    firstname = info["fname"]
+    lastname = info["lname"]
+    print(firstname , lastname)
+    cur.execute(
+        """ INSERT INTO `final`.`manager` (`first_name`, `last_name`) VALUES (%s, %s)""",
+        (firstname, lastname),
+    )
+    mysql.connection.commit()
+    print("row(s) affected :{}".format(cur.rowcount))
+    rows_affected = cur.rowcount
+    cur.close()
+    return make_response(
+        jsonify(
+            {"message": "manager added successfully", "rows_affected": rows_affected}
+        ),
+        200,
+    )
 
 
 if __name__ == "__main__":
