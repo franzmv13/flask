@@ -76,5 +76,27 @@ def add_actor():
     )
 
 
+@app.route("/manager/<int:id>", methods=["PUT"])
+def update_actor(id):
+    cur = mysql.connection.cursor()
+    info = request.get_json()
+    firstname = info["fname"]
+    lastname = info["lname"]
+    cur.execute(
+        """UPDATE `final`.`manager` SET `first_name` = %s, `last_name` = %s WHERE (`id` = %s);
+ """,
+        (firstname, lastname, id),
+    )
+    mysql.connection.commit()
+    rows_affected = cur.rowcount
+    cur.close()
+    return make_response(
+        jsonify(
+            {"message": "actor updated successfully", "rows_affected": rows_affected}
+        ),
+        200,
+    )
+
+
 if __name__ == "__main__":
     app.run(debug=True)
