@@ -12,24 +12,24 @@ app.config["MYSQL_CURSORCLASS"] = "DictCursor"
 
 mysql = MySQL(app)
 @app.route("/")
-def hello_world():
+def hello_world(): #default 
     return "<p>Hello, World!</p>"
 
-@app.route("/patients", methods=["GET"])
+@app.route("/patients", methods=["GET"])#printing all patients in database
 def users():
     cur = mysql.connection.cursor()
     cur.execute("""SELECT * FROM final.patients;""")
     rv = cur.fetchall()
     return make_response(jsonify(rv), 200)
 
-@app.route("/patients/<int:id>", methods=["GET"])
+@app.route("/patients/<int:id>", methods=["GET"])#print patient by id
 def get_actor_by_id(id):
     cur = mysql.connection.cursor()
     cur.execute("""SELECT * FROM final.patients WHERE `id` = {}""".format(id))
     rv = cur.fetchall()
     return make_response(jsonify(rv), 200)
 
-@app.route("/patients/<int:id>/agency", methods=["GET"])
+@app.route("/patients/<int:id>/agency", methods=["GET"]) #print the patient and the agency
 def get_agency_by_id(id):
     cur = mysql.connection.cursor()
     cur.execute("""SELECT patients.first_name,patients.last_name, agency.agency_name
@@ -41,7 +41,7 @@ def get_agency_by_id(id):
     return make_response(jsonify(rv), 200)
 
 
-@app.route("/patients", methods=["POST"])
+@app.route("/patients", methods=["POST"]) #add a new patient to the database
 def add_actor():
     cur = mysql.connection.cursor()
     info = request.get_json()
@@ -64,7 +64,7 @@ def add_actor():
     )
 
 
-@app.route("/patients/<int:id>", methods=["PUT"])
+@app.route("/patients/<int:id>", methods=["PUT"]) #update the patients info by id
 def update_patients(id):
     cur = mysql.connection.cursor()
     info = request.get_json()
@@ -86,7 +86,7 @@ def update_patients(id):
     )
 
 
-@app.route("/patients/<int:id>", methods=["DELETE"])
+@app.route("/patients/<int:id>", methods=["DELETE"]) #deleting patient by id
 def del_patients(id):
     cur = mysql.connection.cursor()
     cur.execute(""" DELETE FROM patients where id = %s """, (id,))
